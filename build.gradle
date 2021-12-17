@@ -8,6 +8,14 @@ group = 'com.veterok'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'com.veterok.sensorapi.Application'
+        )
+    }
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor

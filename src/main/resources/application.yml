@@ -6,5 +6,7 @@ spring:
       uri: ${MONGO_URL}
   redis:
     password: G4W8Dm3wb6p7QsipsdnFfjGJ0PIOU2iQ
-
+springdoc:
+  api-docs:
+    path: /swagger-ui.html
 

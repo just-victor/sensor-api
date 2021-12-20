@@ -1,4 +1,4 @@
-package com.veterok.sensorapi.controller;
+package com.veterok.sensorapi.controller.v1;
 
 
 import com.veterok.sensorapi.model.light.SensorLightDto;

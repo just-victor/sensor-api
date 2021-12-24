@@ -11,7 +11,7 @@ import java.util.UUID;
 @Document
 public class State {
     @Id
-    private UUID id;
+    private UUID id = UUID.randomUUID();
     private UUID sensorId;
     private Instant timestamp;
     private Instant previousRequestTime;

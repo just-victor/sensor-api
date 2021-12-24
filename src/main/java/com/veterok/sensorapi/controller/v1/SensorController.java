@@ -1,6 +1,7 @@
 package com.veterok.sensorapi.controller.v1;
 
 
+import com.veterok.sensorapi.model.Sensor;
 import com.veterok.sensorapi.model.light.SensorLightDto;
 import com.veterok.sensorapi.model.light.StateLightDto;
 import com.veterok.sensorapi.response.ResponseCommand;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -30,6 +32,11 @@ public class SensorController {
     @GetMapping("/{id}")
     public Mono<SensorLightDto> getSensor(@PathVariable UUID id) {
         return sensorService.getSensorSettings(id);
+    }
+
+    @GetMapping("")
+    public Flux<Sensor> getSensors() {
+        return sensorService.getSensors();
     }
 
     @PostMapping("/{id}/coordinates")

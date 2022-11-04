@@ -1,8 +1,18 @@
 server:
   port: ${SERVER_PORT:8080}
+  error:
+    include-message: always
 spring:
   data:
     mongodb:
-      uri: ${MONGO_URL}
+      uri: ${MONGO_URL:mongodb+srv://sensor-api:82dr5anNDIjenLpN@cluster0.vxtne.mongodb.net/sensor-db}
   redis:
     password: G4W8Dm3wb6p7QsipsdnFfjGJ0PIOU2iQ
+security:
+  jwt:
+    secret: MyLolSecretMotherFuckerSupremeJustLoooong
+    expiration: 28800
+  password-encoder:
+    secret: hahaMylol
+    iteration: 35
+    keylength: 256

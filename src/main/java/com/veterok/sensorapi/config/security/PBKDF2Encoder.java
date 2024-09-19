@@ -1,5 +1,6 @@
 package com.veterok.sensorapi.config.security;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -22,19 +23,30 @@ public class PBKDF2Encoder implements PasswordEncoder {
     @Value("${security.password-encoder.keylength}")
     private Integer keylength;
 
+    private SecretKeyFactory keyFactor;
+
+    @PostConstruct
+    public void init() {
+        try {
+            keyFactor = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+        } catch (NoSuchAlgorithmException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
     /**
-     * More info (https://www.owasp.org/index.php/Hashing_Java) 404 :(
+     * More info (<a href="https://www.owasp.org/index.php/Hashing_Java">...</a>) 404 :(
      * @param cs password
      * @return encoded password
      */
     @Override
     public String encode(CharSequence cs) {
         try {
-            byte[] result = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512")
+            byte[] result = keyFactor
                     .generateSecret(new PBEKeySpec(cs.toString().toCharArray(), secret, iteration, keylength))
                     .getEncoded();
             return Base64.getEncoder().encodeToString(result);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
+        } catch (InvalidKeySpecException ex) {
             throw new RuntimeException(ex);
         }
     }

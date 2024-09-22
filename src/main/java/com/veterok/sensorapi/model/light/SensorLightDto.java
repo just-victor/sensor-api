@@ -23,9 +23,9 @@ public class SensorLightDto {
     @JsonProperty("ne")
     @JsonFormat(pattern="HH:mm")
     private LocalTime nightEnd;
-    @JsonProperty("lng")
+    @JsonProperty("ln")
     private double longitude;
-    @JsonProperty("lat")
+    @JsonProperty("lt")
     private double latitude;
 
     public SensorLightDto(int pingPeriodInMin, int nightPingPeriodInMin, LocalTime nightStart, LocalTime nightEnd) {

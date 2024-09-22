@@ -9,20 +9,26 @@ import java.time.Instant;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StateLightDto {
-    @JsonProperty("t")
-    private Instant timestamp;
-    @JsonProperty("prt")
-    private Instant previousRequestTime;
+//    @JsonProperty("t")
+//    private Instant timestamp;
+//    @JsonProperty("prt")
+//    private Instant previousRequestTime;
     @JsonProperty("ws")
-    private double windSpeed;
-    @JsonProperty("wmxs")
-    private double windMaxSpeed;
-    @JsonProperty("wmns")
-    private double windMinSpeed;
+    private float windSpeed;
+    @JsonProperty("wxs")
+    private float windMaxSpeed;
+    @JsonProperty("wns")
+    private float windMinSpeed;
     @JsonProperty("wd")
     private int windDirection;
     @JsonProperty("pp")
-    private double powerPercentages;
+    private int powerPercentages;
     @JsonProperty("tmp")
-    private double temperature;
+    private float temperature;
+    @JsonProperty("lt")
+    private float latitude;
+    @JsonProperty("ln")
+    private float longitude;
+    @JsonProperty("s")
+    private int satellites;
 }

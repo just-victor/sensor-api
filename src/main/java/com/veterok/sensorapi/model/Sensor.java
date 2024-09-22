@@ -24,4 +24,6 @@ public class Sensor {
     private LocalTime nightEnd;
     @LastModifiedDate
     private Instant lastPingTime;
+    private Instant createdTime = Instant.now();
+    private Instant registeredTime;
 }

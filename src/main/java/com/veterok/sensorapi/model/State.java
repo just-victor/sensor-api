@@ -13,12 +13,15 @@ public class State {
     @Id
     private UUID id = UUID.randomUUID();
     private UUID sensorId;
-    private Instant timestamp;
-    private Instant previousRequestTime;
-    private double windSpeed;
-    private double windMaxSpeed;
-    private double windMinSpeed;
+    private Instant timestamp = Instant.now();
+//    private Instant previousRequestTime;
+    private float windSpeed;
+    private float windMaxSpeed;
+    private float windMinSpeed;
     private int windDirection;
-    private double powerPercentages;
-    private double temperature;
+    private float powerPercentages;
+    private float temperature;
+    private float latitude;
+    private float longitude;
+    private int satellites;
 }

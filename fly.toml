@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for sensor-api on 2024-09-20T01:18:05+03:00
+# fly.toml app configuration file generated for sensor-api on 2024-09-22T16:44:15+03:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -9,7 +9,6 @@ app = 'sensor-api'
 
 [http_service]
   internal_port = 8080
-  force_https = true
   auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0

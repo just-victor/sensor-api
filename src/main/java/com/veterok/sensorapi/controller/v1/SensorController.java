@@ -9,6 +9,7 @@ import com.veterok.sensorapi.service.LogService;
 import com.veterok.sensorapi.service.SensorCommandService;
 import com.veterok.sensorapi.service.SensorLightService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/sensors")
 @RequiredArgsConstructor
@@ -51,8 +53,18 @@ public class SensorController {
                 .body(sensorCommandService.getCommand(id));
     }
 
+    @PostMapping("/{id}/register")
+    public ResponseEntity<ResponseCommand> registerSensor(@PathVariable UUID id) {
+        sensorService.registerSensor(id);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(sensorCommandService.getCommand(id));
+    }
+
     @PostMapping("/{id}/state")
     public ResponseEntity<ResponseCommand> addState(@PathVariable UUID id, @RequestBody StateLightDto stateDto) {
+        log.info("Adding state for sensor {}", id);
         sensorService.addState(id, stateDto);
 
         return ResponseEntity.ok()

@@ -10,5 +10,6 @@ import org.mapstruct.Mapping;
 public interface StateMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "sensorId", ignore = true)
+    @Mapping(target = "timestamp", ignore = true)
     State toEntity(StateLightDto dto);
 }

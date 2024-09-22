@@ -42,11 +42,35 @@ public class SensorLightService {
     }
 
     public void addState(UUID sensorId, StateLightDto stateDto) {
+        log.info("Adding state for sensor {}", sensorId);
+        log.info("State: {}", stateDto);
         State state = stateMapper.toEntity(stateDto);
         state.setSensorId(sensorId);
         stateRepository.save(state)
                 .flatMap(it -> updateSensorTime(state.getSensorId()))
                 .subscribe();
+    }
+
+    public void registerSensor(UUID sensorId) {
+        sensorRepository.findById(sensorId)
+                .switchIfEmpty(createNewSensor(sensorId))
+                .map(sensor -> {
+                    sensor.setRegisteredTime(Instant.now());
+                    return sensor;
+                })
+                .flatMap(sensorRepository::save)
+                .map(it -> {
+                    log.info("Sensor {} registered", it.getId());
+                    return it;
+                })
+                .subscribe();
+    }
+
+    private Mono<? extends Sensor> createNewSensor(UUID sensorId) {
+        Sensor sensor = new Sensor();
+        sensor.setId(sensorId);
+        log.info("New sensor {} created", sensorId);
+        return Mono.just(sensor);
     }
 
     private Mono<Sensor> updateSensorTime(UUID sensorId) {

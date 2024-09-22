@@ -1,7 +1,11 @@
 # flyctl launch added from .gitignore
 **/HELP.md
 **/.gradle
-**/build
+**/build/classes
+**/build/tmp
+**/build/resources
+**/build/generated
+
 !**/gradle/wrapper/gradle-wrapper.jar
 !**/**/src/main/**/build
 !**/**/src/test/**/build

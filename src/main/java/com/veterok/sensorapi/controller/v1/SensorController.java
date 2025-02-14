@@ -8,6 +8,7 @@ import com.veterok.sensorapi.response.ResponseCommand;
 import com.veterok.sensorapi.service.LogService;
 import com.veterok.sensorapi.service.SensorCommandService;
 import com.veterok.sensorapi.service.SensorLightService;
+import com.veterok.sensorapi.service.SensorLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -22,7 +23,16 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.nio.ByteBuffer;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
+
+import static com.veterok.sensorapi.controller.v1.LogParser.parseLogs;
+import static com.veterok.sensorapi.utils.DateUtils.SENSOR_FORMATTER;
 
 @Slf4j
 @RestController
@@ -31,6 +41,7 @@ import java.util.UUID;
 public class SensorController {
     private final SensorLightService sensorService;
     private final LogService logService;
+    private final SensorLogService sensorLogService;
     private final SensorCommandService sensorCommandService;
 
 
@@ -44,22 +55,14 @@ public class SensorController {
         return sensorService.getSensors();
     }
 
-    @PostMapping("/{id}/coordinates")
-    public ResponseEntity<ResponseCommand> updateCoordinates(@PathVariable UUID id, @RequestBody SensorLightDto sensorLightDto) {
-        sensorService.updateCoordinates(id, sensorLightDto);
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(sensorCommandService.getCommand(id));
-    }
-
     @PostMapping("/{id}/register")
-    public ResponseEntity<ResponseCommand> registerSensor(@PathVariable UUID id) {
+    public ResponseEntity<String> registerSensor(@PathVariable UUID id) {
+        log.info("Registering sensor {}", id);
         sensorService.registerSensor(id);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(sensorCommandService.getCommand(id));
+                .body(SENSOR_FORMATTER.format(Instant.now().atZone(ZoneId.systemDefault())));
     }
 
     @PostMapping("/{id}/state")
@@ -72,10 +75,12 @@ public class SensorController {
                 .body(sensorCommandService.getCommand(id));
     }
 
-    @PostMapping(value = "/{id}/log")
+    @PostMapping(value = "/{id}/logs")
     @ResponseBody
-    public ResponseEntity<ResponseCommand> sensorLog(@PathVariable UUID id, @RequestBody String logString) {
-        logService.logBulkString(id, logString);
+    public ResponseEntity<ResponseCommand> sensorLog(@PathVariable UUID id, @RequestBody String logBuffer) {
+        log.info("Adding log for sensor {}, buffer length: {}", id, logBuffer.length());
+        sensorLogService.pushLogs(id, logBuffer)
+                .subscribe();
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)

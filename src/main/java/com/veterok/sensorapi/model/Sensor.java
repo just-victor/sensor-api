@@ -7,6 +7,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.TimeZone;
 import java.util.UUID;
 
 @Data
@@ -22,6 +24,7 @@ public class Sensor {
     private int nightPingPeriodInMin;
     private LocalTime nightStart;
     private LocalTime nightEnd;
+    private String timezoneId;
     @LastModifiedDate
     private Instant lastPingTime;
     private Instant createdTime = Instant.now();

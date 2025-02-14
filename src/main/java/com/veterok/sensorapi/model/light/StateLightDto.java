@@ -22,7 +22,7 @@ public class StateLightDto {
     @JsonProperty("wd")
     private int windDirection;
     @JsonProperty("pp")
-    private int powerPercentages;
+    private float powerPercentages;
     @JsonProperty("tmp")
     private float temperature;
     @JsonProperty("lt")
@@ -31,4 +31,6 @@ public class StateLightDto {
     private float longitude;
     @JsonProperty("s")
     private int satellites;
+    @JsonProperty("lq")
+    private int linkQuality;
 }

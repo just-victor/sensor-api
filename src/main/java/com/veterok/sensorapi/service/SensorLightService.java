@@ -1,5 +1,6 @@
 package com.veterok.sensorapi.service;
 
+import com.veterok.sensorapi.feign.GeonamesService;
 import com.veterok.sensorapi.mapper.SensorLightMapper;
 import com.veterok.sensorapi.mapper.StateMapper;
 import com.veterok.sensorapi.model.Sensor;
@@ -27,18 +28,12 @@ public class SensorLightService {
     private final StateRepository stateRepository;
     private final SensorLightMapper mapper;
     private final StateMapper stateMapper;
+    private final GeonamesService geonamesService;
 
     public Mono<SensorLightDto> getSensorSettings(UUID sensorId) {
         return sensorRepository.findById(sensorId)
                 .map(mapper::makeItLight)
                 .switchIfEmpty(Mono.just(DEFAULT_SETTINGS));
-    }
-
-    public void updateCoordinates(UUID id, SensorLightDto coordinates) {
-        sensorRepository.findById(id)
-                .map(sensor -> mapper.updateCoordinates(sensor, coordinates))
-                .flatMap(sensorRepository::save)
-                .subscribe();
     }
 
     public void addState(UUID sensorId, StateLightDto stateDto) {
@@ -47,7 +42,7 @@ public class SensorLightService {
         State state = stateMapper.toEntity(stateDto);
         state.setSensorId(sensorId);
         stateRepository.save(state)
-                .flatMap(it -> updateSensorTime(state.getSensorId()))
+                .flatMap(it -> updateSensorData(state))
                 .subscribe();
     }
 
@@ -59,10 +54,7 @@ public class SensorLightService {
                     return sensor;
                 })
                 .flatMap(sensorRepository::save)
-                .map(it -> {
-                    log.info("Sensor {} registered", it.getId());
-                    return it;
-                })
+                .doOnSuccess(sensor -> log.info("Sensor {} registered", sensor.getId()))
                 .subscribe();
     }
 
@@ -73,11 +65,18 @@ public class SensorLightService {
         return Mono.just(sensor);
     }
 
-    private Mono<Sensor> updateSensorTime(UUID sensorId) {
-        return sensorRepository.findById(sensorId)
-                .map(sensor -> {
+    private Mono<Sensor> updateSensorData(State sensorState) {
+        return sensorRepository.findById(sensorState.getSensorId())
+                .flatMap(sensor -> {
                     sensor.setLastPingTime(Instant.now());
-                    return sensor;
+                    if (sensor.getTimezoneId() == null && sensorState.getLatitude() != 0 && sensorState.getLongitude() != 0) {
+                        return geonamesService.getTimezone(sensorState.getLatitude(), sensorState.getLongitude())
+                                .map(geonames -> {
+                                    sensor.setTimezoneId(geonames.getId());
+                                    return sensor;
+                                }).doOnError(e -> log.error("Error getting timezone", e));
+                    }
+                    return Mono.just(sensor);
                 })
                 .flatMap(sensorRepository::save);
     }

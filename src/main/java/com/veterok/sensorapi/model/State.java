@@ -24,4 +24,5 @@ public class State {
     private float latitude;
     private float longitude;
     private int satellites;
+    private int linkQuality;
 }

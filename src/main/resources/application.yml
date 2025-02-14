@@ -16,6 +16,9 @@ security:
     secret: hahaMylol
     iteration: 35
     keylength: 256
-#logging:
-#  level:
-#    root: trace
+logging:
+  level:
+    root: info
+    org.mongodb: warn
+    reactor: warn
+
